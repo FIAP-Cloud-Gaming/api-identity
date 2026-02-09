@@ -1,0 +1,44 @@
+<Solution>
+  <Folder Name="/.github/" />
+  <Folder Name="/.github/workflows/">
+    <File Path=".github/workflows/ci-cd.yml" />
+  </Folder>
+  <Folder Name="/grafana/provisioning/" />
+  <Folder Name="/grafana/provisioning/dashboards/">
+    <File Path="grafana/provisioning/dashboards/dashboards.yml" />
+    <File Path="grafana/provisioning/dashboards/identity-api-dashboard.json" />
+  </Folder>
+  <Folder Name="/grafana/provisioning/datasources/">
+    <File Path="grafana/provisioning/datasources/datasources.yml" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path=".gitignore" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+    <File Path="nuget.config" />
+    <File Path="README.md" />
+  </Folder>
+  <Folder Name="/grafana/">
+    <Folder Name="/grafana/provisioning/">
+      <Folder Name="/grafana/provisioning/datasources/">
+        <File Path="grafana/provisioning/datasources/datasources.yml" />
+      </Folder>
+      <Folder Name="/grafana/provisioning/dashboards/">
+        <File Path="grafana/provisioning/dashboards/dashboards.yml" />
+        <File Path="grafana/provisioning/dashboards/identity-api-dashboard.json" />
+      </Folder>
+    </Folder>
+    <File Path="grafana/README.md" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/Identity.API/Identity.API.csproj" />
+    <Project Path="src/Identity.Domain/Identity.Domain.csproj" />
+    <Project Path="src/Identity.Infrastructure/Identity.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Identity.UnitTests/Identity.UnitTests.csproj" Id="8e388bda-bb8d-4684-864a-a0f228798324" />
+  </Folder>
+  <Project Path="docker-compose.dcproj">
+    <Build />
+  </Project>
+</Solution>

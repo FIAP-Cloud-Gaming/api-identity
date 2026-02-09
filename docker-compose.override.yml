@@ -1,0 +1,41 @@
+services:
+# ======================================
+# Infrastructure (DEV Ports)
+# ======================================
+  postgres:
+    ports:
+      - "5432:5432"
+
+  jaeger:
+    ports:
+      - "16686:16686"
+      - "4317:4317"
+      - "4318:4318"
+
+  loki:
+    ports:
+      - "3100:3100"
+
+  promtail:
+    ports:
+      - "9080:9080"
+
+  grafana:
+    ports:
+      - "3000:3000"
+
+# ======================================
+# Identity API (DEV Ports + Env)
+# ======================================
+  identity.api:
+    ports:
+      - "5001:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__IdentityDb=Host=postgres;Port=5432;Database=identity_db;Username=postgres;Password=postgres
+      - JwtSettings__Secret=your-super-secret-key-min-32-chars-long-for-development-only
+      - JwtSettings__Issuer=FCG.IdentityService
+      - JwtSettings__Audience=FCG.Client
+      - JwtSettings__AccessTokenExpirationMinutes=60
+      - Loki__Uri=http://loki:3100
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
