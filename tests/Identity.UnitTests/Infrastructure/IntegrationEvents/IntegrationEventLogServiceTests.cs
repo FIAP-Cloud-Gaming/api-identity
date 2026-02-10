@@ -30,7 +30,7 @@ public sealed class IntegrationEventLogServiceTests : IDisposable
         await _service.SaveEventAsync(testEvent, transactionId);
 
         // Assert
-        var events = await _context.IntegrationEventLogs.ToListAsync();
+        var events = await _context.IntegrationEventLogs.ToListAsync(TestContext.Current.CancellationToken);
         events.Should().HaveCount(1);
         events[0].TransactionId.Should().Be(transactionId);
         events[0].State.Should().Be(EventStateEnum.NotPublished);
@@ -62,9 +62,9 @@ public sealed class IntegrationEventLogServiceTests : IDisposable
         await _service.SaveEventAsync(event2, transactionId);
         await _service.SaveEventAsync(event3, transactionId);
 
-        var allEvents = await _context.IntegrationEventLogs.ToListAsync();
+        var allEvents = await _context.IntegrationEventLogs.ToListAsync(TestContext.Current.CancellationToken);
         allEvents[1].State = EventStateEnum.Published;
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         // Act
         var pendingEvents = await _service.RetrieveEventLogsPendingToPublishAsync(transactionId);
@@ -103,9 +103,9 @@ public sealed class IntegrationEventLogServiceTests : IDisposable
         var event3 = new TestEvent { Message = "Third" };
 
         await _service.SaveEventAsync(event1, transactionId);
-        await Task.Delay(10);
+        await Task.Delay(10, TestContext.Current.CancellationToken);
         await _service.SaveEventAsync(event2, transactionId);
-        await Task.Delay(10);
+        await Task.Delay(10, TestContext.Current.CancellationToken);
         await _service.SaveEventAsync(event3, transactionId);
 
         // Act
@@ -124,14 +124,14 @@ public sealed class IntegrationEventLogServiceTests : IDisposable
         // Arrange
         var transactionId = Guid.NewGuid();
         await _service.SaveEventAsync(new TestEvent(), transactionId);
-        var events = await _context.IntegrationEventLogs.ToListAsync();
+        var events = await _context.IntegrationEventLogs.ToListAsync(TestContext.Current.CancellationToken);
         var eventId = events[0].EventId;
 
         // Act
         await _service.MarkEventAsPublishedAsync(eventId);
 
         // Assert
-        var updatedEvent = await _context.IntegrationEventLogs.FindAsync(eventId);
+        var updatedEvent = await _context.IntegrationEventLogs.FindAsync(new object[] { eventId }, TestContext.Current.CancellationToken);
         updatedEvent.Should().NotBeNull();
         updatedEvent!.State.Should().Be(EventStateEnum.Published);
     }
@@ -142,14 +142,14 @@ public sealed class IntegrationEventLogServiceTests : IDisposable
         // Arrange
         var transactionId = Guid.NewGuid();
         await _service.SaveEventAsync(new TestEvent(), transactionId);
-        var events = await _context.IntegrationEventLogs.ToListAsync();
+        var events = await _context.IntegrationEventLogs.ToListAsync(TestContext.Current.CancellationToken);
         var eventId = events[0].EventId;
 
         // Act
         await _service.MarkEventAsInProgressAsync(eventId);
 
         // Assert
-        var updatedEvent = await _context.IntegrationEventLogs.FindAsync(eventId);
+        var updatedEvent = await _context.IntegrationEventLogs.FindAsync(new object[] { eventId }, TestContext.Current.CancellationToken);
         updatedEvent.Should().NotBeNull();
         updatedEvent!.State.Should().Be(EventStateEnum.InProgress);
         updatedEvent.TimesSent.Should().Be(1);
@@ -161,7 +161,7 @@ public sealed class IntegrationEventLogServiceTests : IDisposable
         // Arrange
         var transactionId = Guid.NewGuid();
         await _service.SaveEventAsync(new TestEvent(), transactionId);
-        var events = await _context.IntegrationEventLogs.ToListAsync();
+        var events = await _context.IntegrationEventLogs.ToListAsync(TestContext.Current.CancellationToken);
         var eventId = events[0].EventId;
 
         // Act
@@ -170,7 +170,7 @@ public sealed class IntegrationEventLogServiceTests : IDisposable
         await _service.MarkEventAsInProgressAsync(eventId);
 
         // Assert
-        var updatedEvent = await _context.IntegrationEventLogs.FindAsync(eventId);
+        var updatedEvent = await _context.IntegrationEventLogs.FindAsync(new object[] { eventId }, TestContext.Current.CancellationToken);
         updatedEvent.Should().NotBeNull();
         updatedEvent!.TimesSent.Should().Be(3);
     }
@@ -181,14 +181,14 @@ public sealed class IntegrationEventLogServiceTests : IDisposable
         // Arrange
         var transactionId = Guid.NewGuid();
         await _service.SaveEventAsync(new TestEvent(), transactionId);
-        var events = await _context.IntegrationEventLogs.ToListAsync();
+        var events = await _context.IntegrationEventLogs.ToListAsync(TestContext.Current.CancellationToken);
         var eventId = events[0].EventId;
 
         // Act
         await _service.MarkEventAsFailedAsync(eventId);
 
         // Assert
-        var updatedEvent = await _context.IntegrationEventLogs.FindAsync(eventId);
+        var updatedEvent = await _context.IntegrationEventLogs.FindAsync(new object[] { eventId }, TestContext.Current.CancellationToken);
         updatedEvent.Should().NotBeNull();
         updatedEvent!.State.Should().Be(EventStateEnum.PublishedFailed);
     }
@@ -199,14 +199,14 @@ public sealed class IntegrationEventLogServiceTests : IDisposable
         // Arrange
         var transactionId = Guid.NewGuid();
         await _service.SaveEventAsync(new TestEvent(), transactionId);
-        var events = await _context.IntegrationEventLogs.ToListAsync();
+        var events = await _context.IntegrationEventLogs.ToListAsync(TestContext.Current.CancellationToken);
         var eventId = events[0].EventId;
 
         // Act
         await _service.MarkEventAsFailedAsync(eventId);
 
         // Assert
-        var updatedEvent = await _context.IntegrationEventLogs.FindAsync(eventId);
+        var updatedEvent = await _context.IntegrationEventLogs.FindAsync(new object[] { eventId }, TestContext.Current.CancellationToken);
         updatedEvent.Should().NotBeNull();
         updatedEvent!.TimesSent.Should().Be(0);
     }
@@ -223,7 +223,7 @@ public sealed class IntegrationEventLogServiceTests : IDisposable
         await _service.SaveEventAsync(new TestEvent { Message = "Event3" }, transactionId);
 
         // Assert
-        var events = await _context.IntegrationEventLogs.ToListAsync();
+        var events = await _context.IntegrationEventLogs.ToListAsync(TestContext.Current.CancellationToken);
         events.Should().HaveCount(3);
     }
 

@@ -54,8 +54,8 @@ public sealed class RequestManagerTests : IDisposable
             Name = "TestCommand",
             Time = DateTime.UtcNow
         };
-        await _context.ClientRequests.AddAsync(request);
-        await _context.SaveChangesAsync();
+        await _context.ClientRequests.AddAsync(request, TestContext.Current.CancellationToken);
+        await _context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         // Act
         var exists = await _requestManager.ExistAsync(requestId);
@@ -74,7 +74,7 @@ public sealed class RequestManagerTests : IDisposable
         await _requestManager.CreateRequestForCommandAsync<TestCommand>(requestId);
 
         // Assert
-        var request = await _context.ClientRequests.FindAsync(requestId);
+        var request = await _context.ClientRequests.FindAsync(new object[] { requestId }, TestContext.Current.CancellationToken);
         request.Should().NotBeNull();
         request!.Id.Should().Be(requestId);
         request.Name.Should().Be("TestCommand");
@@ -106,7 +106,7 @@ public sealed class RequestManagerTests : IDisposable
         await _requestManager.CreateRequestForCommandAsync<AnotherTestCommand>(requestId);
 
         // Assert
-        var savedRequest = await _context.ClientRequests.FindAsync(requestId);
+        var savedRequest = await _context.ClientRequests.FindAsync(new object[] { requestId }, TestContext.Current.CancellationToken);
         savedRequest.Should().NotBeNull();
         savedRequest!.Name.Should().Be("AnotherTestCommand");
     }
@@ -121,7 +121,7 @@ public sealed class RequestManagerTests : IDisposable
         await _requestManager.CreateRequestForCommandAsync<MyCustomCommand>(requestId);
 
         // Assert
-        var request = await _context.ClientRequests.FindAsync(requestId);
+        var request = await _context.ClientRequests.FindAsync(new object[] { requestId }, TestContext.Current.CancellationToken);
         request.Should().NotBeNull();
         request!.Name.Should().Be("MyCustomCommand");
     }

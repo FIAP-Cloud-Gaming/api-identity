@@ -48,10 +48,10 @@ public sealed class UserRepositoryTests : IDisposable
 
         // Act
         _repository.Add(user);
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         // Assert
-        var savedUser = await _context.Users.FirstOrDefaultAsync(u => u.Email.Value == "test@example.com");
+        var savedUser = await _context.Users.FirstOrDefaultAsync(u => u.Email.Value == "test@example.com", TestContext.Current.CancellationToken);
         savedUser.Should().NotBeNull();
         savedUser!.Name.FullName.Should().Be("John Doe");
     }
@@ -78,15 +78,15 @@ public sealed class UserRepositoryTests : IDisposable
         // Arrange
         var user = UserTestFactory.CreateValidUser("delete@example.com");
         _repository.Add(user);
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(TestContext.Current.CancellationToken);
         var userId = user.Id;
 
         // Act
         _repository.Delete(user);
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         // Assert
-        var deletedUser = await _repository.GetByIdAsync(userId);
+        var deletedUser = await _repository.GetByIdAsync(userId, TestContext.Current.CancellationToken);
         deletedUser.Should().BeNull();
     }
 
@@ -96,10 +96,10 @@ public sealed class UserRepositoryTests : IDisposable
         // Arrange
         var user = UserTestFactory.CreateValidUser();
         _repository.Add(user);
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         // Act
-        var foundUser = await _repository.GetByIdAsync(user.Id);
+        var foundUser = await _repository.GetByIdAsync(user.Id, TestContext.Current.CancellationToken);
 
         // Assert
         foundUser.Should().NotBeNull();
@@ -110,7 +110,7 @@ public sealed class UserRepositoryTests : IDisposable
     public async Task GetByIdAsync_ShouldReturnNull_WhenUserDoesNotExist()
     {
         // Act
-        var foundUser = await _repository.GetByIdAsync(999);
+        var foundUser = await _repository.GetByIdAsync(999, TestContext.Current.CancellationToken);
 
         // Assert
         foundUser.Should().BeNull();
@@ -122,10 +122,10 @@ public sealed class UserRepositoryTests : IDisposable
         // Arrange
         var user = UserTestFactory.CreateValidUser("test@example.com");
         _repository.Add(user);
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         // Act
-        var foundUser = await _repository.GetByEmailAsync("test@example.com");
+        var foundUser = await _repository.GetByEmailAsync("test@example.com", TestContext.Current.CancellationToken);
 
         // Assert
         foundUser.Should().NotBeNull();
@@ -138,10 +138,10 @@ public sealed class UserRepositoryTests : IDisposable
         // Arrange
         var user = UserTestFactory.CreateValidUser("test@example.com");
         _repository.Add(user);
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         // Act
-        var foundUser = await _repository.GetByEmailAsync("TEST@EXAMPLE.COM");
+        var foundUser = await _repository.GetByEmailAsync("TEST@EXAMPLE.COM", TestContext.Current.CancellationToken);
 
         // Assert
         foundUser.Should().NotBeNull();
@@ -152,7 +152,7 @@ public sealed class UserRepositoryTests : IDisposable
     public async Task GetByEmailAsync_ShouldReturnNull_WhenUserDoesNotExist()
     {
         // Act
-        var foundUser = await _repository.GetByEmailAsync("nonexistent@example.com");
+        var foundUser = await _repository.GetByEmailAsync("nonexistent@example.com", TestContext.Current.CancellationToken);
 
         // Assert
         foundUser.Should().BeNull();
@@ -165,14 +165,14 @@ public sealed class UserRepositoryTests : IDisposable
         var user = UserTestFactory.CreateValidUser("test@example.com");
         var role = UserTestFactory.CreateRole("ADMIN");
         _context.Roles.Add(role);
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         user.AssignRole(role);
         _repository.Add(user);
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         // Act
-        var foundUser = await _repository.GetByEmailAsync("test@example.com");
+        var foundUser = await _repository.GetByEmailAsync("test@example.com", TestContext.Current.CancellationToken);
 
         // Assert
         foundUser.Should().NotBeNull();
@@ -186,10 +186,10 @@ public sealed class UserRepositoryTests : IDisposable
         // Arrange
         var user = UserTestFactory.CreateValidUser("test@example.com");
         _repository.Add(user);
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         // Act
-        var exists = await _repository.ExistsByEmailAsync("test@example.com");
+        var exists = await _repository.ExistsByEmailAsync("test@example.com", TestContext.Current.CancellationToken);
 
         // Assert
         exists.Should().BeTrue();
@@ -201,10 +201,10 @@ public sealed class UserRepositoryTests : IDisposable
         // Arrange
         var user = UserTestFactory.CreateValidUser("test@example.com");
         _repository.Add(user);
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         // Act
-        var exists = await _repository.ExistsByEmailAsync("TEST@EXAMPLE.COM");
+        var exists = await _repository.ExistsByEmailAsync("TEST@EXAMPLE.COM", TestContext.Current.CancellationToken);
 
         // Assert
         exists.Should().BeTrue();
@@ -214,7 +214,7 @@ public sealed class UserRepositoryTests : IDisposable
     public async Task ExistsByEmailAsync_ShouldReturnFalse_WhenUserDoesNotExist()
     {
         // Act
-        var exists = await _repository.ExistsByEmailAsync("nonexistent@example.com");
+        var exists = await _repository.ExistsByEmailAsync("nonexistent@example.com", TestContext.Current.CancellationToken);
 
         // Assert
         exists.Should().BeFalse();
@@ -226,10 +226,10 @@ public sealed class UserRepositoryTests : IDisposable
         // Arrange
         var role = UserTestFactory.CreateRole("ADMIN");
         _context.Roles.Add(role);
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         // Act
-        var foundRole = await _repository.GetRoleByNameAsync("ADMIN");
+        var foundRole = await _repository.GetRoleByNameAsync("ADMIN", TestContext.Current.CancellationToken);
 
         // Assert
         foundRole.Should().NotBeNull();
@@ -242,10 +242,10 @@ public sealed class UserRepositoryTests : IDisposable
         // Arrange
         var role = UserTestFactory.CreateRole("ADMIN");
         _context.Roles.Add(role);
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         // Act
-        var foundRole = await _repository.GetRoleByNameAsync("admin");
+        var foundRole = await _repository.GetRoleByNameAsync("admin", TestContext.Current.CancellationToken);
 
         // Assert
         foundRole.Should().NotBeNull();
@@ -256,7 +256,7 @@ public sealed class UserRepositoryTests : IDisposable
     public async Task GetRoleByNameAsync_ShouldReturnNull_WhenRoleDoesNotExist()
     {
         // Act
-        var foundRole = await _repository.GetRoleByNameAsync("NONEXISTENT");
+        var foundRole = await _repository.GetRoleByNameAsync("NONEXISTENT", TestContext.Current.CancellationToken);
 
         // Assert
         foundRole.Should().BeNull();
@@ -270,10 +270,10 @@ public sealed class UserRepositoryTests : IDisposable
         var role2 = UserTestFactory.CreateRole("USER");
         var role3 = UserTestFactory.CreateRole("MANAGER");
         _context.Roles.AddRange(role1, role2, role3);
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         // Act
-        var roles = await _repository.GetAllRolesAsync();
+        var roles = await _repository.GetAllRolesAsync(TestContext.Current.CancellationToken);
 
         // Assert
         roles.Should().HaveCountGreaterThanOrEqualTo(3);
@@ -288,7 +288,7 @@ public sealed class UserRepositoryTests : IDisposable
         var repository = new UserRepository(context);
 
         // Act
-        var roles = await repository.GetAllRolesAsync();
+        var roles = await repository.GetAllRolesAsync(TestContext.Current.CancellationToken);
 
         // Assert
         // Note: Context may have seeded roles, so we just check it doesn't throw
@@ -302,14 +302,14 @@ public sealed class UserRepositoryTests : IDisposable
         var user = UserTestFactory.CreateValidUser("test@example.com");
         var role = UserTestFactory.CreateRole("ADMIN");
         _context.Roles.Add(role);
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         user.AssignRole(role);
         _repository.Add(user);
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         // Act
-        var foundUser = await _repository.GetByIdWithRolesAsync(user.Id);
+        var foundUser = await _repository.GetByIdWithRolesAsync(user.Id, TestContext.Current.CancellationToken);
 
         // Assert
         foundUser.Should().NotBeNull();
@@ -324,10 +324,10 @@ public sealed class UserRepositoryTests : IDisposable
         var user = UserTestFactory.CreateValidUser("test@example.com");
         user.GenerateRefreshToken("test-token-123");
         _repository.Add(user);
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         // Act
-        var foundUser = await _repository.GetByIdWithTokensAsync(user.Id);
+        var foundUser = await _repository.GetByIdWithTokensAsync(user.Id, TestContext.Current.CancellationToken);
 
         // Assert
         foundUser.Should().NotBeNull();

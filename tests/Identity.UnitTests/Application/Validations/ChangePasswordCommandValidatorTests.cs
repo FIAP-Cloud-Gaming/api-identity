@@ -14,7 +14,7 @@ public sealed class ChangePasswordCommandValidatorTests
         var command = new ChangePasswordCommand(1, "OldP@ssw0rd", "NewP@ssw0rd123");
 
         // Act
-        var result = await _validator.ValidateAsync(command);
+        var result = await _validator.ValidateAsync(command, TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeTrue();
@@ -24,13 +24,13 @@ public sealed class ChangePasswordCommandValidatorTests
     [Theory]
     [InlineData("")]
     [InlineData(null)]
-    public async Task Validate_EmptyCurrentPassword_FailsValidation(string currentPassword)
+    public async Task Validate_EmptyCurrentPassword_FailsValidation(string? currentPassword)
     {
         // Arrange
-        var command = new ChangePasswordCommand(1, currentPassword, "NewP@ssw0rd123");
+        var command = new ChangePasswordCommand(1, currentPassword!, "NewP@ssw0rd123");
 
         // Act
-        var result = await _validator.ValidateAsync(command);
+        var result = await _validator.ValidateAsync(command, TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeFalse();
@@ -40,13 +40,13 @@ public sealed class ChangePasswordCommandValidatorTests
     [Theory]
     [InlineData("")]
     [InlineData(null)]
-    public async Task Validate_EmptyNewPassword_FailsValidation(string newPassword)
+    public async Task Validate_EmptyNewPassword_FailsValidation(string? newPassword)
     {
         // Arrange
-        var command = new ChangePasswordCommand(1, "OldP@ssw0rd", newPassword);
+        var command = new ChangePasswordCommand(1, "OldP@ssw0rd", newPassword!);
 
         // Act
-        var result = await _validator.ValidateAsync(command);
+        var result = await _validator.ValidateAsync(command, TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeFalse();
@@ -62,7 +62,7 @@ public sealed class ChangePasswordCommandValidatorTests
         var command = new ChangePasswordCommand(1, "OldP@ssw0rd", newPassword);
 
         // Act
-        var result = await _validator.ValidateAsync(command);
+        var result = await _validator.ValidateAsync(command, TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeFalse();
@@ -78,7 +78,7 @@ public sealed class ChangePasswordCommandValidatorTests
         var command = new ChangePasswordCommand(1, "OldP@ssw0rd", newPassword);
 
         // Act
-        var result = await _validator.ValidateAsync(command);
+        var result = await _validator.ValidateAsync(command, TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeFalse();
@@ -94,7 +94,7 @@ public sealed class ChangePasswordCommandValidatorTests
         var command = new ChangePasswordCommand(1, "OldP@ssw0rd", newPassword);
 
         // Act
-        var result = await _validator.ValidateAsync(command);
+        var result = await _validator.ValidateAsync(command, TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeFalse();
@@ -110,7 +110,7 @@ public sealed class ChangePasswordCommandValidatorTests
         var command = new ChangePasswordCommand(1, "OldP@ssw0rd", newPassword);
 
         // Act
-        var result = await _validator.ValidateAsync(command);
+        var result = await _validator.ValidateAsync(command, TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeFalse();
@@ -124,7 +124,7 @@ public sealed class ChangePasswordCommandValidatorTests
         var command = new ChangePasswordCommand(1, "", "");
 
         // Act
-        var result = await _validator.ValidateAsync(command);
+        var result = await _validator.ValidateAsync(command, TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeFalse();
@@ -140,7 +140,7 @@ public sealed class ChangePasswordCommandValidatorTests
         var command = new ChangePasswordCommand(1, "OldP@ssw0rd", "weak");
 
         // Act
-        var result = await _validator.ValidateAsync(command);
+        var result = await _validator.ValidateAsync(command, TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeFalse();
@@ -155,7 +155,7 @@ public sealed class ChangePasswordCommandValidatorTests
         var command = new ChangePasswordCommand(1, "weak", "NewP@ssw0rd123");
 
         // Act
-        var result = await _validator.ValidateAsync(command);
+        var result = await _validator.ValidateAsync(command, TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeTrue();
@@ -171,7 +171,7 @@ public sealed class ChangePasswordCommandValidatorTests
         var command = new ChangePasswordCommand(1, "OldP@ssw0rd", newPassword);
 
         // Act
-        var result = await _validator.ValidateAsync(command);
+        var result = await _validator.ValidateAsync(command, TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeTrue();

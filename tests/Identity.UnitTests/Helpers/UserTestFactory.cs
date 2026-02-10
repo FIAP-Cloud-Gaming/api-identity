@@ -42,7 +42,7 @@ internal static class UserTestFactory
             .GetValue(user) as IEnumerable<UserRole>;
 
         var userRole = userRoles!.FirstOrDefault(ur => ur.RoleId == role.Id);
-        if (userRole != null)
+        if (userRole is not null)
         {
             var roleProperty = typeof(UserRole).GetProperty("Role");
             roleProperty!.SetValue(userRole, role);

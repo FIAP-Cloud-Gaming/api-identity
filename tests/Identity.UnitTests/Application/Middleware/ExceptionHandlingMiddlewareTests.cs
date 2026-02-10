@@ -59,7 +59,7 @@ public sealed class ExceptionHandlingMiddlewareTests
         context.Response.ContentType.Should().StartWith("application/json");
 
         context.Response.Body.Position = 0;
-        var responseBody = await new StreamReader(context.Response.Body).ReadToEndAsync();
+        var responseBody = await new StreamReader(context.Response.Body).ReadToEndAsync(TestContext.Current.CancellationToken);
         var problemDetails = JsonSerializer.Deserialize<JsonElement>(responseBody);
 
         problemDetails.GetProperty("title").GetString().Should().Be("Validation Error");
@@ -88,7 +88,7 @@ public sealed class ExceptionHandlingMiddlewareTests
         context.Response.ContentType.Should().StartWith("application/json");
 
         context.Response.Body.Position = 0;
-        var responseBody = await new StreamReader(context.Response.Body).ReadToEndAsync();
+        var responseBody = await new StreamReader(context.Response.Body).ReadToEndAsync(TestContext.Current.CancellationToken);
         var problemDetails = JsonSerializer.Deserialize<JsonElement>(responseBody);
 
         problemDetails.GetProperty("title").GetString().Should().Be("Domain Error");
@@ -117,7 +117,7 @@ public sealed class ExceptionHandlingMiddlewareTests
         context.Response.ContentType.Should().StartWith("application/json");
 
         context.Response.Body.Position = 0;
-        var responseBody = await new StreamReader(context.Response.Body).ReadToEndAsync();
+        var responseBody = await new StreamReader(context.Response.Body).ReadToEndAsync(TestContext.Current.CancellationToken);
         var problemDetails = JsonSerializer.Deserialize<JsonElement>(responseBody);
 
         problemDetails.GetProperty("title").GetString().Should().Be("Unauthorized");
@@ -145,7 +145,7 @@ public sealed class ExceptionHandlingMiddlewareTests
         context.Response.ContentType.Should().StartWith("application/json");
 
         context.Response.Body.Position = 0;
-        var responseBody = await new StreamReader(context.Response.Body).ReadToEndAsync();
+        var responseBody = await new StreamReader(context.Response.Body).ReadToEndAsync(TestContext.Current.CancellationToken);
         var problemDetails = JsonSerializer.Deserialize<JsonElement>(responseBody);
 
         problemDetails.GetProperty("title").GetString().Should().Be("Server Error");
@@ -177,7 +177,7 @@ public sealed class ExceptionHandlingMiddlewareTests
 
         // Assert
         context.Response.Body.Position = 0;
-        var responseBody = await new StreamReader(context.Response.Body).ReadToEndAsync();
+        var responseBody = await new StreamReader(context.Response.Body).ReadToEndAsync(TestContext.Current.CancellationToken);
         var problemDetails = JsonSerializer.Deserialize<JsonElement>(responseBody);
 
         problemDetails.TryGetProperty("errors", out var errors).Should().BeTrue();
@@ -201,7 +201,7 @@ public sealed class ExceptionHandlingMiddlewareTests
 
         await middleware1.InvokeAsync(context1);
         context1.Response.Body.Position = 0;
-        var response1 = await new StreamReader(context1.Response.Body).ReadToEndAsync();
+        var response1 = await new StreamReader(context1.Response.Body).ReadToEndAsync(TestContext.Current.CancellationToken);
         var problem1 = JsonSerializer.Deserialize<JsonElement>(response1);
         problem1.GetProperty("instance").GetString().Should().Be(path);
 
@@ -214,7 +214,7 @@ public sealed class ExceptionHandlingMiddlewareTests
 
         await middleware2.InvokeAsync(context2);
         context2.Response.Body.Position = 0;
-        var response2 = await new StreamReader(context2.Response.Body).ReadToEndAsync();
+        var response2 = await new StreamReader(context2.Response.Body).ReadToEndAsync(TestContext.Current.CancellationToken);
         var problem2 = JsonSerializer.Deserialize<JsonElement>(response2);
         problem2.GetProperty("instance").GetString().Should().Be(path);
     }

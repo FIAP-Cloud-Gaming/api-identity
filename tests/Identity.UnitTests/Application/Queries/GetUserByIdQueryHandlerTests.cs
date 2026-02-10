@@ -19,12 +19,12 @@ public sealed class GetUserByIdQueryHandlerTests
             "hashed_password");
 
         context.Users.Add(user);
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         var query = new GetUserByIdQuery(user.Id);
 
         // Act
-        var result = await handler.Handle(query, CancellationToken.None);
+        var result = await handler.Handle(query, TestContext.Current.CancellationToken);
 
         // Assert
         result.Should().NotBeNull();
@@ -47,7 +47,7 @@ public sealed class GetUserByIdQueryHandlerTests
         var query = new GetUserByIdQuery(999);
 
         // Act
-        var result = await handler.Handle(query, CancellationToken.None);
+        var result = await handler.Handle(query, TestContext.Current.CancellationToken);
 
         // Assert
         result.Should().BeNull();
@@ -75,12 +75,12 @@ public sealed class GetUserByIdQueryHandlerTests
         user.AssignRole(adminRole);
 
         context.Users.Add(user);
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         var query = new GetUserByIdQuery(user.Id);
 
         // Act
-        var result = await handler.Handle(query, CancellationToken.None);
+        var result = await handler.Handle(query, TestContext.Current.CancellationToken);
 
         // Assert
         result.Should().NotBeNull();
@@ -103,12 +103,12 @@ public sealed class GetUserByIdQueryHandlerTests
             "hashed_password");
 
         context.Users.Add(user);
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         var query = new GetUserByIdQuery(user.Id);
 
         // Act
-        var result = await handler.Handle(query, CancellationToken.None);
+        var result = await handler.Handle(query, TestContext.Current.CancellationToken);
 
         // Assert
         result.Should().NotBeNull();
@@ -130,12 +130,12 @@ public sealed class GetUserByIdQueryHandlerTests
 
         user.RecordLogin();
         context.Users.Add(user);
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         var query = new GetUserByIdQuery(user.Id);
 
         // Act
-        var result = await handler.Handle(query, CancellationToken.None);
+        var result = await handler.Handle(query, TestContext.Current.CancellationToken);
 
         // Assert
         result.Should().NotBeNull();

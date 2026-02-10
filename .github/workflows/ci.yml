@@ -1,4 +1,4 @@
-name: CI/CD
+name: CI
 
 on:
   push:
@@ -12,7 +12,7 @@ env:
 
 jobs:
   build:
-    name: Build
+    name: Build & Test
     runs-on: ubuntu-latest
     permissions:
       packages: read
@@ -45,15 +45,5 @@ jobs:
     - name: Build
       run: dotnet build --configuration ${{ env.CONFIGURATION }} --no-restore
 
-  docker:
-    name: Build & Push Docker Image
-    needs: build
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    permissions:
-      packages: write
-      contents: read
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+    - name: Test
+      run: dotnet test --configuration ${{ env.CONFIGURATION }} --no-build --verbosity normal

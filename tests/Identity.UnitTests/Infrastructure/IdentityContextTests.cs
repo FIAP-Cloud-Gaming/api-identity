@@ -32,11 +32,11 @@ public sealed class IdentityContextTests : IDisposable
         _context.Users.Add(user);
 
         // Act
-        var result = await _context.SaveEntitiesAsync();
+        var result = await _context.SaveEntitiesAsync(TestContext.Current.CancellationToken);
 
         // Assert
         result.Should().BeTrue();
-        var savedUser = await _context.Users.FirstOrDefaultAsync(u => u.Email.Value == "test@example.com");
+        var savedUser = await _context.Users.FirstOrDefaultAsync(u => u.Email.Value == "test@example.com", TestContext.Current.CancellationToken);
         savedUser.Should().NotBeNull();
     }
 
@@ -52,7 +52,7 @@ public sealed class IdentityContextTests : IDisposable
         _context.Users.Add(user);
 
         // Act
-        var result = await _context.SaveEntitiesAsync();
+        var result = await _context.SaveEntitiesAsync(TestContext.Current.CancellationToken);
 
         // Assert
         result.Should().BeTrue();
@@ -64,7 +64,7 @@ public sealed class IdentityContextTests : IDisposable
     public async Task SaveEntitiesAsync_ShouldReturnFalse_WhenNoChanges()
     {
         // Act
-        var result = await _context.SaveEntitiesAsync();
+        var result = await _context.SaveEntitiesAsync(TestContext.Current.CancellationToken);
 
         // Assert
         result.Should().BeFalse();
@@ -142,7 +142,7 @@ public sealed class IdentityContextTests : IDisposable
 
         // Assert
         _context.HasActiveTransaction.Should().BeFalse();
-        var savedUser = await _context.Users.FirstOrDefaultAsync(u => u.Email.Value == "test@example.com");
+        var savedUser = await _context.Users.FirstOrDefaultAsync(u => u.Email.Value == "test@example.com", TestContext.Current.CancellationToken);
         savedUser.Should().NotBeNull();
     }
 
@@ -247,11 +247,11 @@ public sealed class IdentityContextTests : IDisposable
         _context.Users.AddRange(user1, user2, user3);
 
         // Act
-        var result = await _context.SaveEntitiesAsync();
+        var result = await _context.SaveEntitiesAsync(TestContext.Current.CancellationToken);
 
         // Assert
         result.Should().BeTrue();
-        var savedUsers = await _context.Users.ToListAsync();
+        var savedUsers = await _context.Users.ToListAsync(TestContext.Current.CancellationToken);
         savedUsers.Should().Contain(u => u.Email.Value == "user1@example.com");
         savedUsers.Should().Contain(u => u.Email.Value == "user2@example.com");
         savedUsers.Should().Contain(u => u.Email.Value == "user3@example.com");

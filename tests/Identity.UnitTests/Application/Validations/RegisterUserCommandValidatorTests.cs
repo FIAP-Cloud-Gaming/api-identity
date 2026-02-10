@@ -18,7 +18,7 @@ public sealed class RegisterUserCommandValidatorTests
             "Doe");
 
         // Act
-        var result = await _validator.ValidateAsync(command);
+        var result = await _validator.ValidateAsync(command, TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeTrue();
@@ -28,13 +28,13 @@ public sealed class RegisterUserCommandValidatorTests
     [Theory]
     [InlineData("")]
     [InlineData(null)]
-    public async Task Validate_EmptyEmail_FailsValidation(string email)
+    public async Task Validate_EmptyEmail_FailsValidation(string? email)
     {
         // Arrange
-        var command = new RegisterUserCommand(email, "StrongP@ss123", "John", "Doe");
+        var command = new RegisterUserCommand(email!, "StrongP@ss123", "John", "Doe");
 
         // Act
-        var result = await _validator.ValidateAsync(command);
+        var result = await _validator.ValidateAsync(command, TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeFalse();
@@ -52,7 +52,7 @@ public sealed class RegisterUserCommandValidatorTests
         var command = new RegisterUserCommand(email, "StrongP@ss123", "John", "Doe");
 
         // Act
-        var result = await _validator.ValidateAsync(command);
+        var result = await _validator.ValidateAsync(command, TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeFalse();
@@ -67,7 +67,7 @@ public sealed class RegisterUserCommandValidatorTests
         var command = new RegisterUserCommand(longEmail, "StrongP@ss123", "John", "Doe");
 
         // Act
-        var result = await _validator.ValidateAsync(command);
+        var result = await _validator.ValidateAsync(command, TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeFalse();
@@ -77,13 +77,13 @@ public sealed class RegisterUserCommandValidatorTests
     [Theory]
     [InlineData("")]
     [InlineData(null)]
-    public async Task Validate_EmptyPassword_FailsValidation(string password)
+    public async Task Validate_EmptyPassword_FailsValidation(string? password)
     {
         // Arrange
-        var command = new RegisterUserCommand("user@example.com", password, "John", "Doe");
+        var command = new RegisterUserCommand("user@example.com", password!, "John", "Doe");
 
         // Act
-        var result = await _validator.ValidateAsync(command);
+        var result = await _validator.ValidateAsync(command, TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeFalse();
@@ -99,7 +99,7 @@ public sealed class RegisterUserCommandValidatorTests
         var command = new RegisterUserCommand("user@example.com", password, "John", "Doe");
 
         // Act
-        var result = await _validator.ValidateAsync(command);
+        var result = await _validator.ValidateAsync(command, TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeFalse();
@@ -115,7 +115,7 @@ public sealed class RegisterUserCommandValidatorTests
         var command = new RegisterUserCommand("user@example.com", password, "John", "Doe");
 
         // Act
-        var result = await _validator.ValidateAsync(command);
+        var result = await _validator.ValidateAsync(command, TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeFalse();
@@ -131,7 +131,7 @@ public sealed class RegisterUserCommandValidatorTests
         var command = new RegisterUserCommand("user@example.com", password, "John", "Doe");
 
         // Act
-        var result = await _validator.ValidateAsync(command);
+        var result = await _validator.ValidateAsync(command, TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeFalse();
@@ -147,7 +147,7 @@ public sealed class RegisterUserCommandValidatorTests
         var command = new RegisterUserCommand("user@example.com", password, "John", "Doe");
 
         // Act
-        var result = await _validator.ValidateAsync(command);
+        var result = await _validator.ValidateAsync(command, TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeFalse();
@@ -157,13 +157,13 @@ public sealed class RegisterUserCommandValidatorTests
     [Theory]
     [InlineData("")]
     [InlineData(null)]
-    public async Task Validate_EmptyFirstName_FailsValidation(string firstName)
+    public async Task Validate_EmptyFirstName_FailsValidation(string? firstName)
     {
         // Arrange
-        var command = new RegisterUserCommand("user@example.com", "StrongP@ss123", firstName, "Doe");
+        var command = new RegisterUserCommand("user@example.com", "StrongP@ss123", firstName!, "Doe");
 
         // Act
-        var result = await _validator.ValidateAsync(command);
+        var result = await _validator.ValidateAsync(command, TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeFalse();
@@ -178,7 +178,7 @@ public sealed class RegisterUserCommandValidatorTests
         var command = new RegisterUserCommand("user@example.com", "StrongP@ss123", longFirstName, "Doe");
 
         // Act
-        var result = await _validator.ValidateAsync(command);
+        var result = await _validator.ValidateAsync(command, TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeFalse();
@@ -188,13 +188,13 @@ public sealed class RegisterUserCommandValidatorTests
     [Theory]
     [InlineData("")]
     [InlineData(null)]
-    public async Task Validate_EmptyLastName_FailsValidation(string lastName)
+    public async Task Validate_EmptyLastName_FailsValidation(string? lastName)
     {
         // Arrange
-        var command = new RegisterUserCommand("user@example.com", "StrongP@ss123", "John", lastName);
+        var command = new RegisterUserCommand("user@example.com", "StrongP@ss123", "John", lastName!);
 
         // Act
-        var result = await _validator.ValidateAsync(command);
+        var result = await _validator.ValidateAsync(command, TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeFalse();
@@ -209,7 +209,7 @@ public sealed class RegisterUserCommandValidatorTests
         var command = new RegisterUserCommand("user@example.com", "StrongP@ss123", "John", longLastName);
 
         // Act
-        var result = await _validator.ValidateAsync(command);
+        var result = await _validator.ValidateAsync(command, TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeFalse();
@@ -223,7 +223,7 @@ public sealed class RegisterUserCommandValidatorTests
         var command = new RegisterUserCommand("invalid-email", "weak", "", "");
 
         // Act
-        var result = await _validator.ValidateAsync(command);
+        var result = await _validator.ValidateAsync(command, TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeFalse();

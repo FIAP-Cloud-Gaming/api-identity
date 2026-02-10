@@ -21,12 +21,12 @@ public sealed class GetAllUsersQueryHandlerTests
                 "hashed_password");
             context.Users.Add(user);
         }
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         var query = new GetAllUsersQuery(Page: 2, PageSize: 5);
 
         // Act
-        var result = await handler.Handle(query, CancellationToken.None);
+        var result = await handler.Handle(query, TestContext.Current.CancellationToken);
 
         // Assert
         result.Should().NotBeNull();
@@ -59,12 +59,12 @@ public sealed class GetAllUsersQueryHandlerTests
 
         context.Users.Add(activeUser);
         context.Users.Add(inactiveUser);
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         var query = new GetAllUsersQuery(Status: "Active");
 
         // Act
-        var result = await handler.Handle(query, CancellationToken.None);
+        var result = await handler.Handle(query, TestContext.Current.CancellationToken);
 
         // Assert
         result.Data.Should().ContainSingle();
@@ -101,12 +101,12 @@ public sealed class GetAllUsersQueryHandlerTests
 
         context.Users.Add(adminUser);
         context.Users.Add(normalUser);
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         var query = new GetAllUsersQuery(Role: "ADMIN");
 
         // Act
-        var result = await handler.Handle(query, CancellationToken.None);
+        var result = await handler.Handle(query, TestContext.Current.CancellationToken);
 
         // Assert
         result.Data.Should().ContainSingle();
@@ -131,12 +131,12 @@ public sealed class GetAllUsersQueryHandlerTests
         adminUser.AssignRole(adminRole);
 
         context.Users.Add(adminUser);
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         var query = new GetAllUsersQuery(Role: "admin");
 
         // Act
-        var result = await handler.Handle(query, CancellationToken.None);
+        var result = await handler.Handle(query, TestContext.Current.CancellationToken);
 
         // Assert
         result.Data.Should().ContainSingle();
@@ -159,12 +159,12 @@ public sealed class GetAllUsersQueryHandlerTests
                 "hashed_password");
             context.Users.Add(user);
         }
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         var query = new GetAllUsersQuery();
 
         // Act
-        var result = await handler.Handle(query, CancellationToken.None);
+        var result = await handler.Handle(query, TestContext.Current.CancellationToken);
 
         // Assert
         result.Data.Should().HaveCount(5);
@@ -179,20 +179,20 @@ public sealed class GetAllUsersQueryHandlerTests
         var handler = new GetAllUsersQueryHandler(context);
 
         var user1 = UserTestFactory.CreateValidUser("user1@example.com", "User1", "Test", "hash");
-        await Task.Delay(10);
+        await Task.Delay(10, TestContext.Current.CancellationToken);
         var user2 = UserTestFactory.CreateValidUser("user2@example.com", "User2", "Test", "hash");
-        await Task.Delay(10);
+        await Task.Delay(10, TestContext.Current.CancellationToken);
         var user3 = UserTestFactory.CreateValidUser("user3@example.com", "User3", "Test", "hash");
 
         context.Users.Add(user1);
         context.Users.Add(user2);
         context.Users.Add(user3);
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         var query = new GetAllUsersQuery(PageSize: 10);
 
         // Act
-        var result = await handler.Handle(query, CancellationToken.None);
+        var result = await handler.Handle(query, TestContext.Current.CancellationToken);
 
         // Assert
         result.Data.Should().HaveCount(3);
@@ -210,7 +210,7 @@ public sealed class GetAllUsersQueryHandlerTests
         var query = new GetAllUsersQuery();
 
         // Act
-        var result = await handler.Handle(query, CancellationToken.None);
+        var result = await handler.Handle(query, TestContext.Current.CancellationToken);
 
         // Assert
         result.Data.Should().BeEmpty();
@@ -232,12 +232,12 @@ public sealed class GetAllUsersQueryHandlerTests
             "hashed_password");
 
         context.Users.Add(user);
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync(TestContext.Current.CancellationToken);
 
         var query = new GetAllUsersQuery();
 
         // Act
-        var result = await handler.Handle(query, CancellationToken.None);
+        var result = await handler.Handle(query, TestContext.Current.CancellationToken);
 
         // Assert
         result.Data.Should().ContainSingle();

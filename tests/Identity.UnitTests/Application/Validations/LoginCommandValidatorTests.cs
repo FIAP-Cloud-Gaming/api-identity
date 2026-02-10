@@ -14,7 +14,7 @@ public sealed class LoginCommandValidatorTests
         var command = new LoginCommand("user@example.com", "P@ssw0rd123");
 
         // Act
-        var result = await _validator.ValidateAsync(command);
+        var result = await _validator.ValidateAsync(command, TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeTrue();
@@ -24,13 +24,13 @@ public sealed class LoginCommandValidatorTests
     [Theory]
     [InlineData("")]
     [InlineData(null)]
-    public async Task Validate_EmptyEmail_FailsValidation(string email)
+    public async Task Validate_EmptyEmail_FailsValidation(string? email)
     {
         // Arrange
-        var command = new LoginCommand(email, "P@ssw0rd123");
+        var command = new LoginCommand(email!, "P@ssw0rd123");
 
         // Act
-        var result = await _validator.ValidateAsync(command);
+        var result = await _validator.ValidateAsync(command, TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeFalse();
@@ -49,7 +49,7 @@ public sealed class LoginCommandValidatorTests
         var command = new LoginCommand(email, "P@ssw0rd123");
 
         // Act
-        var result = await _validator.ValidateAsync(command);
+        var result = await _validator.ValidateAsync(command, TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeFalse();
@@ -59,13 +59,13 @@ public sealed class LoginCommandValidatorTests
     [Theory]
     [InlineData("")]
     [InlineData(null)]
-    public async Task Validate_EmptyPassword_FailsValidation(string password)
+    public async Task Validate_EmptyPassword_FailsValidation(string? password)
     {
         // Arrange
-        var command = new LoginCommand("user@example.com", password);
+        var command = new LoginCommand("user@example.com", password!);
 
         // Act
-        var result = await _validator.ValidateAsync(command);
+        var result = await _validator.ValidateAsync(command, TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeFalse();
@@ -79,7 +79,7 @@ public sealed class LoginCommandValidatorTests
         var command = new LoginCommand("", "");
 
         // Act
-        var result = await _validator.ValidateAsync(command);
+        var result = await _validator.ValidateAsync(command, TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeFalse();
@@ -96,7 +96,7 @@ public sealed class LoginCommandValidatorTests
         var command = new LoginCommand("user@example.com", "weak");
 
         // Act
-        var result = await _validator.ValidateAsync(command);
+        var result = await _validator.ValidateAsync(command, TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeTrue();
@@ -112,7 +112,7 @@ public sealed class LoginCommandValidatorTests
         var command = new LoginCommand(email, password);
 
         // Act
-        var result = await _validator.ValidateAsync(command);
+        var result = await _validator.ValidateAsync(command, TestContext.Current.CancellationToken);
 
         // Assert
         result.IsValid.Should().BeTrue();
