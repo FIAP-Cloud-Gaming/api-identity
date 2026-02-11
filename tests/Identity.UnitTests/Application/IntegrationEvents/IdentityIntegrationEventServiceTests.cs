@@ -19,14 +19,15 @@ public sealed class IdentityIntegrationEventServiceTests
 
         var eventLogService = Substitute.For<IIntegrationEventLogService>();
         var logger = Substitute.For<ILogger<IdentityIntegrationEventService>>();
+        var eventBus = Substitute.For<IEventBus>();
 
-        var service = new IdentityIntegrationEventService(context, eventLogService, logger);
+        var service = new IdentityIntegrationEventService(context, eventBus, eventLogService, logger);
 
         var transactionId = Guid.NewGuid();
         var pendingEvents = new List<IntegrationEventLogEntry>
         {
-            new IntegrationEventLogEntry(new TestIntegrationEvent(), transactionId),
-            new IntegrationEventLogEntry(new TestIntegrationEvent(), transactionId)
+            new IntegrationEventLogEntry(new UserRegisteredIntegrationEvent(1, "user1@test.com", "User One"), transactionId),
+            new IntegrationEventLogEntry(new UserRegisteredIntegrationEvent(2, "user2@test.com", "User Two"), transactionId)
         };
 
         eventLogService.RetrieveEventLogsPendingToPublishAsync(transactionId)
@@ -37,6 +38,10 @@ public sealed class IdentityIntegrationEventServiceTests
 
         // Assert
         await eventLogService.Received(1).RetrieveEventLogsPendingToPublishAsync(transactionId);
+        await eventLogService.Received(pendingEvents.Count)
+            .MarkEventAsInProgressAsync(Arg.Any<Guid>());
+        await eventBus.Received(pendingEvents.Count)
+            .PublishAsync(Arg.Any<IntegrationEvent>());
         await eventLogService.Received(pendingEvents.Count)
             .MarkEventAsPublishedAsync(Arg.Any<Guid>());
     }
@@ -53,31 +58,33 @@ public sealed class IdentityIntegrationEventServiceTests
 
         var eventLogService = Substitute.For<IIntegrationEventLogService>();
         var logger = Substitute.For<ILogger<IdentityIntegrationEventService>>();
+        var eventBus = Substitute.For<IEventBus>();
 
-        var service = new IdentityIntegrationEventService(context, eventLogService, logger);
+        var service = new IdentityIntegrationEventService(context, eventBus, eventLogService, logger);
 
         var transactionId = Guid.NewGuid();
         var eventId = Guid.NewGuid();
         var pendingEvents = new List<IntegrationEventLogEntry>
         {
-            new IntegrationEventLogEntry(new TestIntegrationEvent(), transactionId)
+            new IntegrationEventLogEntry(new UserActivatedIntegrationEvent(1, "user@test.com"), transactionId)
         };
 
-        // Simula que o EventId é o mesmo que foi criado
         typeof(IntegrationEventLogEntry).GetProperty("EventId")!
             .SetValue(pendingEvents[0], eventId);
 
         eventLogService.RetrieveEventLogsPendingToPublishAsync(transactionId)
             .Returns(pendingEvents);
 
-        eventLogService.MarkEventAsPublishedAsync(Arg.Any<Guid>())
+        eventBus.PublishAsync(Arg.Any<IntegrationEvent>())
             .Returns(Task.FromException(new InvalidOperationException("Publish failed")));
 
         // Act
         await service.PublishEventsThroughEventBusAsync(transactionId);
 
         // Assert
+        await eventLogService.Received(1).MarkEventAsInProgressAsync(eventId);
         await eventLogService.Received(1).MarkEventAsFailedAsync(eventId);
+        await eventLogService.DidNotReceive().MarkEventAsPublishedAsync(Arg.Any<Guid>());
     }
 
     [Fact]
@@ -92,8 +99,9 @@ public sealed class IdentityIntegrationEventServiceTests
 
         var eventLogService = Substitute.For<IIntegrationEventLogService>();
         var logger = Substitute.For<ILogger<IdentityIntegrationEventService>>();
+        var eventBus = Substitute.For<IEventBus>();
 
-        var service = new IdentityIntegrationEventService(context, eventLogService, logger);
+        var service = new IdentityIntegrationEventService(context, eventBus, eventLogService, logger);
 
         var transactionId = Guid.NewGuid();
         eventLogService.RetrieveEventLogsPendingToPublishAsync(transactionId)
@@ -106,6 +114,7 @@ public sealed class IdentityIntegrationEventServiceTests
         await eventLogService.Received(1).RetrieveEventLogsPendingToPublishAsync(transactionId);
         await eventLogService.DidNotReceive().MarkEventAsPublishedAsync(Arg.Any<Guid>());
         await eventLogService.DidNotReceive().MarkEventAsFailedAsync(Arg.Any<Guid>());
+        await eventBus.DidNotReceive().PublishAsync(Arg.Any<IntegrationEvent>());
     }
 
     [Fact]
@@ -115,12 +124,13 @@ public sealed class IdentityIntegrationEventServiceTests
         var context = IdentityContextFactory.Create();
         var eventLogService = Substitute.For<IIntegrationEventLogService>();
         var logger = Substitute.For<ILogger<IdentityIntegrationEventService>>();
+        var eventBus = Substitute.For<IEventBus>();
 
-        var service = new IdentityIntegrationEventService(context, eventLogService, logger);
+        var service = new IdentityIntegrationEventService(context, eventBus, eventLogService, logger);
 
-        var @event = new TestIntegrationEvent();
+        var @event = new UserRegisteredIntegrationEvent(1, "test@test.com", "Test User");
 
-        // Inicia uma transação
+        // Inicia uma transacao
         var transaction = await context.BeginTransactionAsync();
 
         // Act
@@ -137,10 +147,11 @@ public sealed class IdentityIntegrationEventServiceTests
         var context = IdentityContextFactory.Create();
         var eventLogService = Substitute.For<IIntegrationEventLogService>();
         var logger = Substitute.For<ILogger<IdentityIntegrationEventService>>();
+        var eventBus = Substitute.For<IEventBus>();
 
-        var service = new IdentityIntegrationEventService(context, eventLogService, logger);
+        var service = new IdentityIntegrationEventService(context, eventBus, eventLogService, logger);
 
-        var @event = new TestIntegrationEvent();
+        var @event = new UserRegisteredIntegrationEvent(1, "test@test.com", "Test User");
 
         // Act
         var act = async () => await service.AddAndSaveEventAsync(@event);
@@ -157,12 +168,13 @@ public sealed class IdentityIntegrationEventServiceTests
         var context = IdentityContextFactory.Create();
         var eventLogService = Substitute.For<IIntegrationEventLogService>();
         var logger = Substitute.For<ILogger<IdentityIntegrationEventService>>();
+        var eventBus = Substitute.For<IEventBus>();
 
-        var service = new IdentityIntegrationEventService(context, eventLogService, logger);
+        var service = new IdentityIntegrationEventService(context, eventBus, eventLogService, logger);
 
-        var @event = new TestIntegrationEvent();
+        var @event = new UserRegisteredIntegrationEvent(1, "test@test.com", "Test User");
 
-        // Inicia uma transação
+        // Inicia uma transacao
         await context.BeginTransactionAsync();
 
         // Act
@@ -189,13 +201,14 @@ public sealed class IdentityIntegrationEventServiceTests
 
         var eventLogService = Substitute.For<IIntegrationEventLogService>();
         var logger = Substitute.For<ILogger<IdentityIntegrationEventService>>();
+        var eventBus = Substitute.For<IEventBus>();
 
-        var service = new IdentityIntegrationEventService(context, eventLogService, logger);
+        var service = new IdentityIntegrationEventService(context, eventBus, eventLogService, logger);
 
         var transactionId = Guid.NewGuid();
         var pendingEvents = new List<IntegrationEventLogEntry>
         {
-            new IntegrationEventLogEntry(new TestIntegrationEvent(), transactionId)
+            new IntegrationEventLogEntry(new UserDeactivatedIntegrationEvent(1, "test@test.com"), transactionId)
         };
 
         eventLogService.RetrieveEventLogsPendingToPublishAsync(transactionId)
@@ -211,11 +224,5 @@ public sealed class IdentityIntegrationEventServiceTests
             Arg.Is<object>(o => o.ToString()!.Contains("Publishing integration event")),
             null,
             Arg.Any<Func<object, Exception?, string>>());
-    }
-
-    private sealed record TestIntegrationEvent
-    {
-        public Guid Id { get; init; } = Guid.NewGuid();
-        public DateTime OccurredOn { get; init; } = DateTime.UtcNow;
     }
 }

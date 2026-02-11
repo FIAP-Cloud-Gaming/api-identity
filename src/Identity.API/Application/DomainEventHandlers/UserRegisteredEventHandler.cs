@@ -1,6 +1,7 @@
 ﻿namespace Identity.API.Application.DomainEventHandlers;
 
 internal sealed class UserRegisteredEventHandler(
+    IIdentityIntegrationEventService integrationEventService,
     ILogger<UserRegisteredEventHandler> logger)
     : INotificationHandler<UserRegisteredDomainEvent>
 {
@@ -8,11 +9,13 @@ internal sealed class UserRegisteredEventHandler(
         LoggerMessage.Define<string, int>(LogLevel.Information, new EventId(100, "UserRegistered"),
             "Domain Event: User registered - {Email} ({UserId})");
 
-    public Task Handle(UserRegisteredDomainEvent domainEvent, CancellationToken ct)
+    public async Task Handle(UserRegisteredDomainEvent domainEvent, CancellationToken ct)
     {
         LogUserRegistered(logger, domainEvent.Email, domainEvent.UserId, null);
 
+        var integrationEvent = new UserRegisteredIntegrationEvent(
+            domainEvent.UserId, domainEvent.Email, domainEvent.FullName);
 
-        return Task.CompletedTask;
+        await integrationEventService.AddAndSaveEventAsync(integrationEvent);
     }
 }

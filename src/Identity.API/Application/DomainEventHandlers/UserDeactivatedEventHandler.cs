@@ -1,6 +1,7 @@
 namespace Identity.API.Application.DomainEventHandlers;
 
 internal sealed class UserDeactivatedEventHandler(
+    IIdentityIntegrationEventService integrationEventService,
     ILogger<UserDeactivatedEventHandler> logger)
     : INotificationHandler<UserDeactivatedDomainEvent>
 {
@@ -8,16 +9,13 @@ internal sealed class UserDeactivatedEventHandler(
         LoggerMessage.Define<string, int>(LogLevel.Warning, new EventId(104, "UserDeactivated"),
             "Domain Event: User deactivated - {Email} ({UserId})");
 
-    public Task Handle(UserDeactivatedDomainEvent domainEvent, CancellationToken ct)
+    public async Task Handle(UserDeactivatedDomainEvent domainEvent, CancellationToken ct)
     {
         LogUserDeactivated(logger, domainEvent.Email, domainEvent.UserId, null);
 
-        // TODO: Aqui você pode adicionar lógica adicional, como:
-        // - Invalidar todos os tokens do usuário
-        // - Revogar todas as sessões ativas
-        // - Enviar email de notificação
-        // - Publicar evento de integração para outros serviços
+        var integrationEvent = new UserDeactivatedIntegrationEvent(
+            domainEvent.UserId, domainEvent.Email);
 
-        return Task.CompletedTask;
+        await integrationEventService.AddAndSaveEventAsync(integrationEvent);
     }
 }

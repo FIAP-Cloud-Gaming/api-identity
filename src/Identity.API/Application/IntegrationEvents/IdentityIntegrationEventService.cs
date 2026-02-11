@@ -1,9 +1,11 @@
+using System.Text.Json;
 using Identity.Infrastructure.IntegrationEvents;
 
 namespace Identity.API.Application.IntegrationEvents;
 
 public class IdentityIntegrationEventService(
     IdentityContext context,
+    IEventBus eventBus,
     IIntegrationEventLogService eventLogService,
     ILogger<IdentityIntegrationEventService> logger) : IIdentityIntegrationEventService
 {
@@ -17,10 +19,17 @@ public class IdentityIntegrationEventService(
 
             try
             {
-                await eventLogService.MarkEventAsPublishedAsync(logEvt.EventId);
+                await eventLogService.MarkEventAsInProgressAsync(logEvt.EventId);
 
-                // TODO: Aqui você publicaria no message bus (RabbitMQ, Azure Service Bus, etc)
-                // await _eventBus.PublishAsync(logEvt);
+                var eventType = Type.GetType(logEvt.EventTypeName)
+                    ?? throw new InvalidOperationException($"Could not resolve type '{logEvt.EventTypeName}'");
+
+                var integrationEvent = JsonSerializer.Deserialize(logEvt.Content, eventType) as IntegrationEvent
+                    ?? throw new InvalidOperationException($"Could not deserialize event '{logEvt.EventTypeName}'");
+
+                await eventBus.PublishAsync(integrationEvent);
+
+                await eventLogService.MarkEventAsPublishedAsync(logEvt.EventId);
             }
             catch (Exception ex)
             {
@@ -34,7 +43,7 @@ public class IdentityIntegrationEventService(
     {
         logger.LogInformation("Enqueuing integration event {IntegrationEventId} to repository ({@IntegrationEvent})", @event.GetType().Name, @event);
 
-        var transaction = context.GetCurrentTransaction() 
+        var transaction = context.GetCurrentTransaction()
             ?? throw new InvalidOperationException("A transaction must be active to save integration events");
 
         await eventLogService.SaveEventAsync(@event, transaction.TransactionId);

@@ -1,3 +1,5 @@
+using EventBusRabbitMQ;
+
 namespace Identity.API.Extensions;
 
 internal static class Extensions
@@ -53,12 +55,20 @@ internal static class Extensions
                 .Enrich.WithProperty("Application", "Identity.API")
                 .WriteTo.Console(
                     outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} <s:{SourceContext}>{NewLine}{Exception}")
-                .WriteTo.GrafanaLoki(lokiUri, labels: new[]
-                {
+                .WriteTo.GrafanaLoki(lokiUri, labels:
+                [
                     new LokiLabel { Key = "app", Value = "identity-api" },
                     new LokiLabel { Key = "environment", Value = builder.Environment.EnvironmentName }
-                });
+                ]);
         });
+
+        return builder;
+    }
+
+    public static IHostApplicationBuilder ConfigureEventBus(this IHostApplicationBuilder builder)
+    {
+        builder.AddRabbitMqEventBus(builder.Configuration.GetConnectionString("RabbitMQ")!, "identity-service")
+        .AddSubscription<PaymentSucceededIntegrationEvent, PaymentSucceededIntegrationEventHandler>();
 
         return builder;
     }

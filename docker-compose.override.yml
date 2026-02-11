@@ -24,6 +24,11 @@ services:
     ports:
       - "3000:3000"
 
+  rabbitmq:
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
 # ======================================
 # Identity API (DEV Ports + Env)
 # ======================================
@@ -33,6 +38,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__IdentityDb=Host=postgres;Port=5432;Database=identity_db;Username=postgres;Password=postgres
+      - ConnectionStrings__RabbitMQ=amqp://guest:guest@rabbitmq:5672
       - JwtSettings__Secret=your-super-secret-key-min-32-chars-long-for-development-only
       - JwtSettings__Issuer=FCG.IdentityService
       - JwtSettings__Audience=FCG.Client

@@ -27,11 +27,8 @@
   <ItemGroup>
     <ProjectReference Include="..\Identity.Domain\Identity.Domain.csproj" />
     <ProjectReference Include="..\Identity.Infrastructure\Identity.Infrastructure.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Application\IntegrationEvents\Events\" />
-    <Folder Include="Application\IntegrationEvents\EventHandling\" />
+    <ProjectReference Include="..\..\..\EventBus\src\EventBus\EventBus.csproj" />
+    <ProjectReference Include="..\..\..\EventBus\src\EventBusRabbitMQ\EventBusRabbitMQ.csproj" />
   </ItemGroup>
 
   <ItemGroup>

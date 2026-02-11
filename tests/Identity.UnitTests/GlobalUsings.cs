@@ -22,6 +22,11 @@ global using Identity.API.Application.Behaviors;
 global using Identity.API.Application.Validations;
 global using Identity.API.Application.Models;
 global using Identity.API.Application.IntegrationEvents;
+global using Identity.API.Application.IntegrationEvents.EventHandling;
+global using Identity.API.Application.IntegrationEvents.Events;
+
+global using EventBus.Abstractions;
+global using EventBus.Events;
 global using Identity.API.Application.Queries.GetUserById;
 global using Identity.API.Application.Queries.GetAllUsers;
 global using Identity.API.Application.DomainEventHandlers;

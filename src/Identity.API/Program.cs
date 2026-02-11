@@ -7,6 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.ConfigureIdentitySerilog();
 builder.ConfigureOpenTelemetry();
+builder.ConfigureEventBus();
 
 builder.Services
     .AddInfrastructure(builder.Configuration)

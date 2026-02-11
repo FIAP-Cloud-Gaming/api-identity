@@ -1,6 +1,7 @@
 namespace Identity.API.Application.DomainEventHandlers;
 
 internal sealed class UserActivatedEventHandler(
+    IIdentityIntegrationEventService integrationEventService,
     ILogger<UserActivatedEventHandler> logger)
     : INotificationHandler<UserActivatedDomainEvent>
 {
@@ -8,15 +9,13 @@ internal sealed class UserActivatedEventHandler(
         LoggerMessage.Define<string, int>(LogLevel.Information, new EventId(103, "UserActivated"),
             "Domain Event: User activated - {Email} ({UserId})");
 
-    public Task Handle(UserActivatedDomainEvent domainEvent, CancellationToken ct)
+    public async Task Handle(UserActivatedDomainEvent domainEvent, CancellationToken ct)
     {
         LogUserActivated(logger, domainEvent.Email, domainEvent.UserId, null);
 
-        // TODO: Aqui você pode adicionar lógica adicional, como:
-        // - Enviar email de boas-vindas
-        // - Notificar equipe
-        // - Publicar evento de integração
+        var integrationEvent = new UserActivatedIntegrationEvent(
+            domainEvent.UserId, domainEvent.Email);
 
-        return Task.CompletedTask;
+        await integrationEventService.AddAndSaveEventAsync(integrationEvent);
     }
 }

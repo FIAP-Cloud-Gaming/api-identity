@@ -10,7 +10,13 @@ global using Identity.Infrastructure.Idempotency;
 
 global using Identity.API.Application.Behaviors;
 global using Identity.API.Application.IntegrationEvents;
+global using Identity.API.Application.IntegrationEvents.Events;
+global using Identity.API.Application.IntegrationEvents.EventHandling;
 global using Identity.API.Application.Models;
+
+global using EventBus.Abstractions;
+global using EventBus.Events;
+global using EventBus.Extensions;
 
 global using Mediator;
 global using Mediator.Behaviors;

@@ -8,8 +8,9 @@ public sealed class DomainEventHandlersTests
     public async Task UserRegisteredEventHandler_Handle_CompletesSuccessfully()
     {
         // Arrange
+        var integrationEventService = Substitute.For<IIdentityIntegrationEventService>();
         var logger = NullLogger<UserRegisteredEventHandler>.Instance;
-        var handler = new UserRegisteredEventHandler(logger);
+        var handler = new UserRegisteredEventHandler(integrationEventService, logger);
         var user = User.Create(
             new Email("user@example.com"),
             Password.FromHash("hashed_password"),
@@ -57,8 +58,9 @@ public sealed class DomainEventHandlersTests
     public async Task UserActivatedEventHandler_Handle_CompletesSuccessfully()
     {
         // Arrange
+        var integrationEventService = Substitute.For<IIdentityIntegrationEventService>();
         var logger = NullLogger<UserActivatedEventHandler>.Instance;
-        var handler = new UserActivatedEventHandler(logger);
+        var handler = new UserActivatedEventHandler(integrationEventService, logger);
         var domainEvent = new UserActivatedDomainEvent(1, "user@example.com");
 
         // Act
@@ -72,8 +74,9 @@ public sealed class DomainEventHandlersTests
     public async Task UserDeactivatedEventHandler_Handle_CompletesSuccessfully()
     {
         // Arrange
+        var integrationEventService = Substitute.For<IIdentityIntegrationEventService>();
         var logger = NullLogger<UserDeactivatedEventHandler>.Instance;
-        var handler = new UserDeactivatedEventHandler(logger);
+        var handler = new UserDeactivatedEventHandler(integrationEventService, logger);
         var domainEvent = new UserDeactivatedDomainEvent(1, "user@example.com");
 
         // Act
@@ -155,7 +158,9 @@ public sealed class DomainEventHandlersTests
             Password.FromHash("hashed_password"),
             new PersonName("Test", "User"));
 
-        await new UserRegisteredEventHandler(NullLogger<UserRegisteredEventHandler>.Instance)
+        var integrationEventService = Substitute.For<IIdentityIntegrationEventService>();
+
+        await new UserRegisteredEventHandler(integrationEventService, NullLogger<UserRegisteredEventHandler>.Instance)
             .Handle(new UserRegisteredDomainEvent(testUser), cts.Token);
 
         await new PasswordChangedEventHandler(NullLogger<PasswordChangedEventHandler>.Instance)
@@ -164,10 +169,10 @@ public sealed class DomainEventHandlersTests
         await new UserLoggedInEventHandler(NullLogger<UserLoggedInEventHandler>.Instance)
             .Handle(new UserLoggedInDomainEvent(1, "test@example.com", DateTime.UtcNow), cts.Token);
 
-        await new UserActivatedEventHandler(NullLogger<UserActivatedEventHandler>.Instance)
+        await new UserActivatedEventHandler(integrationEventService, NullLogger<UserActivatedEventHandler>.Instance)
             .Handle(new UserActivatedDomainEvent(1, "test@example.com"), cts.Token);
 
-        await new UserDeactivatedEventHandler(NullLogger<UserDeactivatedEventHandler>.Instance)
+        await new UserDeactivatedEventHandler(integrationEventService, NullLogger<UserDeactivatedEventHandler>.Instance)
             .Handle(new UserDeactivatedDomainEvent(1, "test@example.com"), cts.Token);
 
         await new RoleAssignedEventHandler(NullLogger<RoleAssignedEventHandler>.Instance)
