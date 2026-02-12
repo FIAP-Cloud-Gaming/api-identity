@@ -12,6 +12,8 @@
 
   <ItemGroup>
     <PackageReference Include="AspNetCore.HealthChecks.NpgSql" />
+    <PackageReference Include="FiapCloudGaming.EventBus" />
+    <PackageReference Include="FiapCloudGaming.EventBusRabbitMQ" />
     <PackageReference Include="FiapCloudGaming.Mediator" />
     <PackageReference Include="FiapCloudGaming.ServiceDefaults" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
@@ -27,8 +29,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Identity.Domain\Identity.Domain.csproj" />
     <ProjectReference Include="..\Identity.Infrastructure\Identity.Infrastructure.csproj" />
-    <ProjectReference Include="..\..\..\EventBus\src\EventBus\EventBus.csproj" />
-    <ProjectReference Include="..\..\..\EventBus\src\EventBusRabbitMQ\EventBusRabbitMQ.csproj" />
   </ItemGroup>
 
   <ItemGroup>
