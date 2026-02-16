@@ -15,6 +15,10 @@ env:
 jobs:
   build-and-test:
     uses: ./.github/workflows/ci.yml
+    permissions:
+      packages: read
+      contents: read
+      checks: write
 
   publish:
     name: build and push docker image

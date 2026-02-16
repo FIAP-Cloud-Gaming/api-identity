@@ -59,14 +59,14 @@ jobs:
           --configfile nuget.config
 
     - name: restore dependencies
-      run: dotnet restore
+      run: dotnet restore Identity.slnx
 
     - name: build
-      run: dotnet build --configuration ${{ env.CONFIGURATION }} --no-restore
+      run: dotnet build Identity.slnx --configuration ${{ env.CONFIGURATION }} --no-restore
 
     - name: test
       run: |
-        dotnet test --configuration ${{ env.CONFIGURATION }} --no-build \
+        dotnet test Identity.slnx --configuration ${{ env.CONFIGURATION }} --no-build \
           --verbosity normal \
           --logger "trx;LogFileName=results.trx"
 
