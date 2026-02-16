@@ -61,8 +61,10 @@ jobs:
         cache-to: type=gha,mode=max
 
     - name: scan for vulnerabilities
-      uses: lazy-actions/gitrivy@v3
+      uses: aquasecurity/trivy-action@master
       with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        image: ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:latest
+        image-ref: ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:latest
+        format: table
+        exit-code: '0'
         ignore-unfixed: true
+        severity: CRITICAL,HIGH
