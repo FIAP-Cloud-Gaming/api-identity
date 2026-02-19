@@ -1,17 +1,9 @@
 <Solution>
-  <Folder Name="/.github/" />
   <Folder Name="/.github/workflows/">
     <File Path=".github/workflows/cd.yml" />
     <File Path=".github/workflows/ci.yml" />
   </Folder>
   <Folder Name="/grafana/provisioning/" />
-  <Folder Name="/grafana/provisioning/dashboards/">
-    <File Path="grafana/provisioning/dashboards/dashboards.yml" />
-    <File Path="grafana/provisioning/dashboards/identity-api-dashboard.json" />
-  </Folder>
-  <Folder Name="/grafana/provisioning/datasources/">
-    <File Path="grafana/provisioning/datasources/datasources.yml" />
-  </Folder>
   <Folder Name="/Solution Items/">
     <File Path=".gitignore" />
     <File Path="Directory.Build.props" />
