@@ -23,10 +23,7 @@ app.MapDefaultEndpoints();
 
 app.UseExceptionHandling();
 
-if (app.Environment.IsDevelopment())
-{
-    app.ApplyMigrations();
-}
+app.ApplyMigrations();
 
 app.UseOpenApiDocumentation();
 
