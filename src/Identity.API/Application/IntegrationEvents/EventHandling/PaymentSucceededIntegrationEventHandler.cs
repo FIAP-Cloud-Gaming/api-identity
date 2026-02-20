@@ -7,8 +7,8 @@ internal sealed class PaymentSucceededIntegrationEventHandler(
     public Task Handle(PaymentSucceededIntegrationEvent @event)
     {
         logger.LogInformation(
-            "Integration Event: Payment {PaymentId} succeeded for user {UserId}. Amount: {Amount}",
-            @event.PaymentId, @event.UserId, @event.Amount);
+            "Integration Event: Payment {PaymentId} succeeded for user {UserId}. Amount: {TotalAmount} {Currency}",
+            @event.PaymentId, @event.UserId, @event.TotalAmount, @event.Currency);
 
         // TODO: Atualizar historico de pagamentos do usuario
 
